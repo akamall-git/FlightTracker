@@ -40,10 +40,15 @@
         .split > .right {
             flex: 1;
         }
-        .split > .left {
-            border: 1px dashed rgba(0, 0, 0, 0.2);
+
+        /* Placeholder for the map, an empty box with grey dashed border lines*/
+        .map-placeholder {
+            border: 3px dashed rgba(0, 0, 0, 0.5);
             min-height: 200px;
+            padding: 1rem;
+            margin: 1rem;
         }
+        
 
 
     </style>
@@ -62,14 +67,15 @@
                 <div class="left">
                     <h2 class="subtitle-vista-blue">Map</h2>
                     <hr class="spacing">
-                    <p class="text">Placeholder</p>
+                    <p class="text">Placeholder for map</p>
+                    <div class="map-placeholder"></div>
                 </div>
 
                 <!-- Right side column -->
                 <div class="right">
-                    <h2 class="subtitle-vista-blue">Lorem Ipsum</h2>
+                    <h2 class="subtitle-vista-blue">Settings</h2>
                     <hr class="spacing">
-                    <p class="text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Corrupti quia recusandae aliquam et error officia aliquid, ea est culpa nesciunt asperiores fugiat facilis, omnis voluptatibus quibusdam, optio id expedita. Sapiente?</p>
+                    <p class="text">Adjust settings</p>
                     <!-- Test button -->
                     <button class="button" id="testButton">Test</button>
                 </div>

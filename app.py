@@ -1,8 +1,9 @@
 #Importing libraries
-import time
-import webbrowser
+import time #Not used currently, used for old ngrok start process
+import webbrowser #For automatically opening the ngrok URL in the default web browser on script run
 from flask import Flask
 from flask import render_template
+import csv #For reading 'airports.csv'
 
 #Importing libaries so ngrok can work on MacOS for development
 import os
@@ -19,7 +20,8 @@ import requests
 #Defining Constants
 AUTH_TOKEN = "2n9HhWvL2Bba7GmJ3amVYZjDkED_2dMRdEGFY1oWnf3ZemkiC"
 DEV_PAGE_AUTO_OPEN = True #Set if you want page to auto open when program is ran
-
+ 
+#Endof defining Constants
 
 
 # Setting of Authtoken for ngrok
