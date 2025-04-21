@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="Viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Tracker</title>
+
+    <!-- CSS Style Sheet-->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style/main.css') }}"
+    />
+
+    <style>
+        body.image-bk {
+            background-image:
+                url("{{ url_for('static', filename='images/wallpaper.jpg') }}");
+                background-size: cover;
+                background-position: center;
+        }
+
+        .content {
+            max-width: 1000px;
+            margin: 4rem auto;
+            text-align: center;
+        }
+
+        .button {
+            width: 120px;
+            margin-top: 2rem;
+        }
+
+        .split {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        .split > .left,
+        .split > .right {
+            flex: 1;
+        }
+        .split > .left {
+            border: 1px dashed rgba(0, 0, 0, 0.2);
+            min-height: 200px;
+        }
+
+
+    </style>
+</head>
+<body class="image-bk">
+    <div class="content">
+        <div class="content-inside">
+
+            <!-- Full window width title -->
+            <h1 class="title-vista-blue">Flight Tracker</h1>
+            
+            <!-- Splits page into 2 equal columns -->
+            <div class="split">
+
+                <!-- Left side column, placeholder for map --> 
+                <div class="left">
+                    <h2 class="subtitle-vista-blue">Map</h2>
+                    <hr class="spacing">
+                    <p class="text">Placeholder</p>
+                </div>
+
+                <!-- Right side column -->
+                <div class="right">
+                    <h2 class="subtitle-vista-blue">Lorem Ipsum</h2>
+                    <hr class="spacing">
+                    <p class="text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Corrupti quia recusandae aliquam et error officia aliquid, ea est culpa nesciunt asperiores fugiat facilis, omnis voluptatibus quibusdam, optio id expedita. Sapiente?</p>
+                    <!-- Test button -->
+                    <button class="button" id="testButton">Test</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test button
+        document.getElementById("testButton").addEventListener("click", () => {
+            alert("Test button pressed!");
+        } )
+    </script>
+
+</body>
+</html>
