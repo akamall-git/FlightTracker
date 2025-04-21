@@ -48,8 +48,48 @@
             padding: 1rem;
             margin: 1rem;
         }
-        
 
+        /* inline-radio buttons */
+        .radio-group {
+            display: flex;
+            width: 100%;
+            justify-content: space-evenly;
+            align-items: center;
+            margin-top: 1rem;
+
+            /* gap: 1.5rem; */
+        }
+
+        .radio-group label {
+            flex: 1;
+            text-align: center;
+
+            /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+            /* font-size: 1rem; */
+            /* color: white; */
+        }
+
+        /* Override .forms-inside so it sits in proper location */
+        .forms-inside {
+            /* Overides inhertited styling to ensure proper placement */
+            transform: none !important;
+
+            /* Centers the form box */
+            width: 80% !important;
+            margin: 1.5rem auto !important;
+
+            /* Maintains border styling */
+            border: 1px solid rgb(107, 107, 107);
+            border-radius: 4px;
+
+            /* background-color: white; */
+        }
+        
+        /* Increases height of text input box for ease of use */
+        .input {
+            height: 1rem !important;
+            line-height: 1rem;
+        }
 
     </style>
 </head>
@@ -76,19 +116,51 @@
                     <h2 class="subtitle-vista-blue">Settings</h2>
                     <hr class="spacing">
                     <p class="text">Adjust settings</p>
-                    <!-- Test button -->
-                    <button class="button" id="testButton">Test</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <script>
-        // Test button
+                    
+                    <div class="forms-inside">
+
+                        <!-- Text input for ICAO code -->
+                        <input
+                        type="text"
+                        id="ICAOInput"
+                        class="input"
+                        placeholder="Enter ICAO code"
+                        maxlength="4"
+                        />
+
+                        <!-- Three inline radio buttons -->
+                        <div class="radio-group">
+                            <!-- Departures -->
+                            <label class="text">
+                                <input type="radio" name="flightType" value="arrivals" />
+                                Arrivals
+                            </label>
+    
+                            <!-- Arrivals -->
+                            <label class="text">
+                                <input type="radio" name="flightType" value="departures" />
+                                Departures
+                            </label>
+    
+                            <!-- Both -->
+                            <label class="text">
+                                <input type="radio" name="flightType" value="both" />
+                                Both
+                            </label>
+                        </div> <!-- end of radio-group -->
+                    </div> <!-- end of forms.inside -->   
+                </div>  <!-- end of right side column -->
+            </div> <!-- end of split -->
+        </div> <!-- end of content-inside -->
+    </div> <!-- end of content -->
+
+    <script> 
+        /* // Test button
         document.getElementById("testButton").addEventListener("click", () => {
             alert("Test button pressed!");
-        } )
-    </script>
+        } )  */
+    </script> 
 
 </body>
 </html>

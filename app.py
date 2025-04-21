@@ -39,6 +39,9 @@ def start_ngrok():
     # Return the public URL for use elsewhere in the script
     return public_url
 
+
+
+
 app = Flask(__name__)
 
 @app.route('/')
