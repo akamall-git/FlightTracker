@@ -1,8 +1,9 @@
 #Importing libraries
 import time #Not used currently, used for old ngrok start process
 import webbrowser #For automatically opening the ngrok URL in the default web browser on script run
-from flask import Flask
-from flask import render_template
+from flask import Flask #Flask web app
+from flask import render_template #rendering HTML templates
+from flask import jsonify #returning JSON responses
 import csv #For reading 'airports.csv'
 
 #Importing libaries so ngrok can work on MacOS for development
@@ -42,7 +43,28 @@ def start_ngrok():
 
 
 
-app = Flask(__name__)
+app = Flask(__name__) # Creates flask app instance
+
+
+
+airports = {}
+with open("data/airports.csv", newline="", encoding='utf-8') as f:
+    reader = csv.reader(f)
+    for row in reader:
+        #Format= 0: airport ID, 1: airport name, 2: city, 3: country, 4: IATA code, 5: ICAO code, 6: latitude, 7: longitude 
+        icao = row[5].strip().upper()
+        if not icao:
+            continue
+        airports[icao] = {
+            "name": row[1],
+            "lat": float(row[6]),
+            "lon": float(row[7]),
+        }
+
+@app.route("/api/airports")
+def get_airports():
+    # Return the airports data as a JSON response
+    return jsonify(airports)
 
 @app.route('/')
 def index():

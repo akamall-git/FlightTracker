@@ -12,6 +12,13 @@
         href="{{ url_for('static', filename='style/main.css') }}"
     />
 
+    <!-- Leaflet -->
+    <link
+        rel = "stylesheet"
+        href = "https://unpkg.com/leaflet/dist/leaflet.css"
+    />
+    <script src = "https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
     <style>
         body.image-bk {
             background-image:
@@ -49,6 +56,8 @@
             margin: 1rem;
         }
 
+        
+
         /* inline-radio buttons */
         .radio-group {
             display: flex;
@@ -67,6 +76,13 @@
             /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
             /* font-size: 1rem; */
             /* color: white; */
+        }
+
+        /* Leaflet container for the map */
+        #map {
+            height: 300px;
+            margin: 1rem;
+            border: 3px dashed rgba(0, 0, 0, 0.5);
         }
 
         /* Override .forms-inside so it sits in proper location */
@@ -107,8 +123,8 @@
                 <div class="left">
                     <h2 class="subtitle-vista-blue">Map</h2>
                     <hr class="spacing">
-                    <p class="text">Placeholder for map</p>
-                    <div class="map-placeholder"></div>
+                    <p class="text">Map</p>
+                    <div id="map"></div>
                 </div>
 
                 <!-- Right side column -->
@@ -155,6 +171,7 @@
 
 
                         </div> <!-- end of radio-group -->
+                        <button id ="goButton" class="button">Go</button> <!-- Le go button -->
                     </div> <!-- end of forms.inside -->   
                 </div>  <!-- end of right side column -->
             </div> <!-- end of split -->
@@ -162,6 +179,44 @@
     </div> <!-- end of content -->
 
     <script> 
+        // Init map
+        const map = L.map("map").setView([20,0], 2); // Set init view on map
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "&copy; OpenStreetMap contributors"
+        }).addTo(map);
+        let marker; // Declare marker var.
+
+        document.getElementById("goButton").addEventListener("click", async () => {
+            const code = document.getElementById("ICAOInput").value.trim().toUpperCase();
+            const type = document.querySelector('input[name="flightType"]:checked');
+            if (!code || !type) {
+                return alert("Please enter an ICAO code and select a flight type.");
+            }
+
+            //fetch airport data
+            const res = await fetch("/api/airports");
+            const data = await res.json();
+
+            if (!data [code]) {
+                return alert("Invalid ICAO code, airport not found.");
+            }
+
+            const {lat, lon, name } = data[code]; 
+            
+            
+            //remove old marker if it exists
+            if (marker) {
+                map.removeLayer(marker);
+            }
+            //create new marker
+            marker = L.marker([lat, lon])
+                .addTo(map)
+                .bindPopup(`<b>${name}</b><br>ICAO: ${code}`) 
+                .openPopup();
+            map.setView([lat, lon], 8);
+        });
+
+        // Redundant as hell code
         /* // Test button
         document.getElementById("testButton").addEventListener("click", () => {
             alert("Test button pressed!");
