@@ -4,6 +4,7 @@ import webbrowser #For automatically opening the ngrok URL in the default web br
 from flask import Flask #Flask web app
 from flask import render_template #rendering HTML templates
 from flask import jsonify #returning JSON responses
+from flask import request #For getting data from the request
 import csv #For reading 'airports.csv'
 
 #Importing libaries so ngrok can work on MacOS for development
@@ -14,7 +15,7 @@ os.environ['SSL_CERT_FILE'] = certifi.where()
 from pyngrok import ngrok
 
 import subprocess
-import requests
+import requests 
 
 #Endof importing libraries
 
@@ -22,6 +23,10 @@ import requests
 AUTH_TOKEN = "2n9HhWvL2Bba7GmJ3amVYZjDkED_2dMRdEGFY1oWnf3ZemkiC"
 DEV_PAGE_AUTO_OPEN = True #Set if you want page to auto open when program is ran
  
+#OpenSky credentials
+OS_USER = "aadamk"
+OS_PASS = "nuvtov-5sIcmi-duvwux"
+
 #Endof defining Constants
 
 
@@ -65,6 +70,54 @@ with open("data/airports.csv", newline="", encoding='utf-8') as f:
 def get_airports():
     # Return the airports data as a JSON response
     return jsonify(airports)
+
+@app.route("/api/flights")
+def get_flights():
+    icao = request.args.get("icao", "").upper()
+    ftype = request.args.get("type", "").lower()
+    if ftype not in ("arrivals", "departures") or icao not in airports:
+        return jsonify({"error": "missing or invalid parameters"}), 400
+    
+    
+    # REDUNDANT CODE
+    #OS_USER = os.getenv("aadamk")
+    #OS_PASS = os.getenv("nuvtov-5sIcmi-duvwux")
+    
+    if not OS_USER or not OS_PASS:
+        return jsonify({"error": "OpenSky credentials not configured"}), 500
+
+    now = int(time.time())
+    begin = now - 4*3600
+    url = f"https://{OS_USER}:{OS_PASS}@opensky-network.org/api/flights/{ftype}"
+    parameters = {"airport": icao, "begin": begin, "end": now}
+
+
+    response = requests.get(
+        f"https://opensky-network.org/api/flights/{ftype}",
+        auth = (OS_USER, OS_PASS),
+        params=parameters,
+        timeout=10
+    )
+
+    if response.status_code != 200:
+        #Includes status code and reponse text in the JSON
+        return jsonify({
+            "error": f"Opensky {ftype} API Returned {response.status_code}",
+            "details": response.text #Provides greater details about the error
+        }), response.status_code
+
+    flights = response.json()[:5] #First 5 entries
+    out = []
+    for f in flights:
+        out.append({
+            "flight": f.get("callsign", "").strip() or "N/A",
+            "icao24": f.get("icao24", ""),
+            "flightType": ftype,
+            #Placeholder for ETA currently
+            "etaMinutes": "TBD"
+        })
+    return jsonify(out)
+
 
 @app.route('/')
 def index():

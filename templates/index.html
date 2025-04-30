@@ -107,6 +107,29 @@
             line-height: 1rem;
         }
 
+        /* Flights table styling */
+        .flights-section {
+            width: 80%;
+            margin: 2rem auto;
+            text-align: center;
+        }
+
+        .flights-section table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem
+        }
+
+        .flights-section th,
+        .flights-section td {
+            border: 1px solid #aaa;
+            padding: 0.5rem;
+        }
+
+        .flights-section th {
+            background: #eee
+        }
+
     </style>
 </head>
 <body class="image-bk">
@@ -175,6 +198,10 @@
                     </div> <!-- end of forms.inside -->   
                 </div>  <!-- end of right side column -->
             </div> <!-- end of split -->
+
+            <!-- Flights table -->
+            <div id="flights-section" class ="flights-section"></div>
+
         </div> <!-- end of content-inside -->
     </div> <!-- end of content -->
 
@@ -184,13 +211,19 @@
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             attribution: "&copy; OpenStreetMap contributors"
         }).addTo(map);
+
         let marker; // Declare marker var.
 
         document.getElementById("goButton").addEventListener("click", async () => {
-            const code = document.getElementById("ICAOInput").value.trim().toUpperCase();
-            const type = document.querySelector('input[name="flightType"]:checked');
+            const code = document.getElementById("ICAOInput")
+                .value.trim()
+                .toUpperCase();
+            const type = document.querySelector(
+                'input[name="flightType"]:checked');
             if (!code || !type) {
-                return alert("Please enter an ICAO code and select a flight type.");
+                return alert(
+                    "Please enter an ICAO code and select a flight type."
+                );
             }
 
             //fetch airport data
@@ -203,7 +236,6 @@
 
             const {lat, lon, name } = data[code]; 
             
-            
             //remove old marker if it exists
             if (marker) {
                 map.removeLayer(marker);
@@ -214,13 +246,59 @@
                 .bindPopup(`<b>${name}</b><br>ICAO: ${code}`) 
                 .openPopup();
             map.setView([lat, lon], 8);
-        });
 
-        // Redundant as hell code
-        /* // Test button
-        document.getElementById("testButton").addEventListener("click", () => {
-            alert("Test button pressed!");
-        } )  */
+            //Fetches 5 flights for table 
+            try {
+                const flightsRes = await fetch(`/api/flights?icao=${code}&type=${type.value}`);
+                const flights = await flightsRes.json();
+                if (flights.error) {
+                    let msg = `Could not fetch flight data:\n${flights.error}`;
+                    if (flights.details) {
+                        msg += "\n\nDetails:\n" + flights.details;
+                    }
+                    alert(msg);
+                    return;
+                }
+
+                //Building HTML table
+                let html = `<table>
+                    <thead>
+                        <tr>
+                            <th>Flights</th>
+                            <th>ETA (min)</th>
+                            <th>Type</th>
+                            <th>ICAO24</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                for (const f of flights) {
+                    html += `<tr>
+                        <td>${f.flight}</td>
+                        <td>${f.etaMinutes}</td>
+                        <td>${f.flightType}</td>
+                        <td>${f.icao24}</td>
+                    </tr>`;
+                }
+
+                html += `</tbody></table>`;
+
+                // Insert HTML into flights section
+                document.getElementById("flights-section").innerHTML = html; 
+            }
+            catch (networkErr) {
+                // catches timeouts, dns failures, etc..
+                alert(
+                    "Network error when contacting flights API:\n" + 
+                    networkErr
+                );
+            }
+
+            // Redundant as hell code
+            /* // Test button
+            document.getElementById("testButton").addEventListener("click", () => {
+                alert("Test button pressed!");
+            } )  */
+        });
     </script> 
 
 </body>
